@@ -1,0 +1,206 @@
+<!--
+ * @Author: lzy
+ * @Description: 
+ * @Date: 2022-07-26 19:31:35
+ * @LastEditTime: 2022-07-28 20:01:53
+ * @FilePath: \code\threeStages\week02\day09\cart\index.html
+-->
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            width: 1200px;
+            height: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+
+        ul {
+            width: 100%;
+            /* height: 100%; */
+            margin-top: 100px;
+        }
+
+        ul>li {
+
+            width: 100%;
+            height: 100px;
+            background-color: #fffceb;
+            list-style: none;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .edit {
+            display: inline-block;
+        }
+
+        li>strong {
+            display: inline-block;
+            width: 200px;
+        }
+
+        li>span {
+            display: inline-block;
+            width: 100px;
+        }
+
+        em {
+            font-style: normal;
+            display: inline-block;
+            width: 80px;
+            height: 40px;
+            background-color: #c91423;
+            cursor: pointer;
+            color: #fff;
+            text-align: center;
+            line-height: 40px;
+        }
+
+        em:hover {
+            opacity: .5;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='app'>
+        <div class="box">
+            <ul>
+                <li>
+                    <span>
+                        商品名
+                    </span>
+                    <strong>商品介绍</strong>
+                    <span>数量</span>
+                    <span>价格</span>
+                    <span>总价</span>
+                    <div class="edit">
+                        操作
+                    </div>
+                </li>
+                <li v-for="(item,index) in list" :keys="item.id">
+                    <span>
+                        <input type="checkbox" name="checks" @click="choice">
+                        {{item.name}}
+                    </span>
+                    <strong>{{item.title}}</strong>
+                    <span>
+                        <button @click="item.num--">-1</button>
+                        {{item.num}}
+                        <button @click="item.num++">+1</button>
+                    </span>
+                    <span>
+                        {{item.price,'￥ '|priceFilters}}
+                    </span>
+                    <span>{{item.num*item.price,'￥ '|priceFilters}}</span>
+                    <div class="edit">
+                        <button @click="deleteCart(item.id)">删除</button>
+                    </div>
+                </li>
+                <!-- 总计 -->
+                <li>
+                    <span>
+                        <input type="checkbox" name="allBox" id="allBox" @click="allBox">
+                        全选
+                    </span>
+                    <strong></strong>
+                    <span>总量</span>
+                    <span></span>
+                    <span>总价</span>
+                    <div class="edit">
+                        <em>
+                            去结算
+                        </em>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 引入vue.js -->
+    <script src='https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js'></script>
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                list: [
+                    { id: 1, name: 'iPhone 13', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 1, price: 9999 },
+                    { id: 2, name: 'iPhone 12', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 8888 },
+                    { id: 3, name: 'iPhone 11', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 7598 },
+                    { id: 4, name: 'iPhone 10', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 300, price: 1000.15 },
+                    { id: 5, name: 'iPhone 9', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 2555 },
+                    { id: 6, name: '小米', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 8666 }
+                ],
+                // 总量
+                total: 0,
+                // 总价
+                totalPrice: 0,
+            },
+            methods: {
+                deleteCart(id) {
+                    for (let key in this.list) {
+                        // console.log(this.list[key]['id'] === id);
+                        if (this.list[key]['id'] === id) {
+                            this.list.splice(key, 1);
+                        }
+                    }
+
+                },
+                // 全选按钮功能
+                allBox() {
+                    let boxs = document.querySelectorAll('input[name="checks"]')
+                    console.log(boxs);
+                    console.log(event.target.checked)
+                    boxs.forEach((item) => {
+                        item.checked = event.target.checked;
+                    })
+                    boxs.checked = event.target.checked;
+                },
+                // 单个选择框
+                choice() {
+                    let flag = true;
+                    let boxs = document.querySelectorAll('input[name="checks"]')
+                    let allBox = document.querySelector('#allBox');
+                    // console.log(allBox);
+                    boxs.forEach((item) => {
+                        if (!item.checked) {
+                            flag = false;
+                        }
+                    })
+                    allBox.checked = flag;
+                    this.calcTotal();
+                },
+                // 计算总量
+                calcTotal() {
+                    let boxs = document.querySelectorAll('input[name="checks"]')
+                    boxs.forEach((item) => {
+                        let str = item.parentNode.parentNode.children[2].innerText;
+                        console.log(str.substring(str.indexOf(' '), str.lastIndexOf(' ')).trim());
+                    })
+                }
+                // 计算总价
+            },
+            // 过滤器生成￥
+            filters: {
+                priceFilters(val, str) {
+                    return str + val.toFixed(2);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
