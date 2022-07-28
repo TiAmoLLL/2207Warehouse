@@ -2,8 +2,8 @@
  * @Author: lzy
  * @Description: 
  * @Date: 2022-07-26 19:31:35
- * @LastEditTime: 2022-07-28 20:01:53
- * @FilePath: \code\threeStages\week02\day09\cart\index.html
+ * @LastEditTime: 2022-07-28 21:04:16
+ * @FilePath: \code\test\2207Warehouse\07-28\index.html
 -->
 <!DOCTYPE html>
 <html lang='en'>
@@ -99,9 +99,9 @@
                     </span>
                     <strong>{{item.title}}</strong>
                     <span>
-                        <button @click="item.num--">-1</button>
+                        <button @click="reduceNum(--item.num)">-1</button>
                         {{item.num}}
-                        <button @click="item.num++">+1</button>
+                        <button @click="addNum(++item.num)">+1</button>
                     </span>
                     <span>
                         {{item.price,'￥ '|priceFilters}}
@@ -118,9 +118,9 @@
                         全选
                     </span>
                     <strong></strong>
-                    <span>总量</span>
+                    <span>总量:{{total}}件</span>
                     <span></span>
-                    <span>总价</span>
+                    <span>总价:{{totalPrice}}</span>
                     <div class="edit">
                         <em>
                             去结算
@@ -157,7 +157,14 @@
                             this.list.splice(key, 1);
                         }
                     }
-
+                    this.calcTotal();
+                },
+                addNum(num) {
+                    console.log(num)
+                    this.calcTotal();
+                },
+                reduceNum() {
+                    this.calcTotal();
                 },
                 // 全选按钮功能
                 allBox() {
@@ -168,6 +175,7 @@
                         item.checked = event.target.checked;
                     })
                     boxs.checked = event.target.checked;
+                    this.calcTotal();
                 },
                 // 单个选择框
                 choice() {
@@ -182,22 +190,49 @@
                     })
                     allBox.checked = flag;
                     this.calcTotal();
+
                 },
                 // 计算总量
                 calcTotal() {
                     let boxs = document.querySelectorAll('input[name="checks"]')
+                    this.total = 0;
                     boxs.forEach((item) => {
-                        let str = item.parentNode.parentNode.children[2].innerText;
-                        console.log(str.substring(str.indexOf(' '), str.lastIndexOf(' ')).trim());
+                        if (item.checked) {
+                            console.log(this.total);
+                            let str = item.parentNode.parentNode.children[2].innerText;
+                            this.total += parseInt(str.substring(str.indexOf(' '), str.lastIndexOf(' ')).trim());
+                            console.log(this.total);
+                        }
+
+                    })
+                    this.calcTotalPrice();
+                },
+                // 计算总价
+                calcTotalPrice() {
+                    let boxs = document.querySelectorAll('input[name="checks"]')
+                    this.totalPrice = 0;
+                    boxs.forEach((item) => {
+                        if (item.checked) {
+                            let str = item.parentNode.parentNode.children[4].innerText;
+                            console.log(str.substring(str.lastIndexOf(' ')))
+                            this.totalPrice += parseFloat(str.substring(str.lastIndexOf(' ')));
+                            // this.total += parseInt(str.substring(str.indexOf(' '), str.lastIndexOf(' ')).trim());
+                        }
+
                     })
                 }
-                // 计算总价
+            },
+            mounted() {
+                this.calcTotal();
             },
             // 过滤器生成￥
             filters: {
                 priceFilters(val, str) {
                     return str + val.toFixed(2);
                 }
+            },
+            watch: {
+
             }
         })
     </script>
