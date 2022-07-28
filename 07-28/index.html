@@ -2,7 +2,7 @@
  * @Author: lzy
  * @Description: 
  * @Date: 2022-07-26 19:31:35
- * @LastEditTime: 2022-07-28 21:04:16
+ * @LastEditTime: 2022-07-28 21:18:03
  * @FilePath: \code\test\2207Warehouse\07-28\index.html
 -->
 <!DOCTYPE html>
@@ -55,7 +55,7 @@
 
         li>span {
             display: inline-block;
-            width: 100px;
+            width: 120px;
         }
 
         em {
@@ -120,7 +120,7 @@
                     <strong></strong>
                     <span>总量:{{total}}件</span>
                     <span></span>
-                    <span>总价:{{totalPrice}}</span>
+                    <span>总价:{{totalPrice.toFixed(2)}}</span>
                     <div class="edit">
                         <em>
                             去结算
@@ -196,11 +196,11 @@
                 calcTotal() {
                     let boxs = document.querySelectorAll('input[name="checks"]')
                     this.total = 0;
-                    boxs.forEach((item) => {
+                    boxs.forEach((item, index) => {
+                        console.log(index)
                         if (item.checked) {
-                            console.log(this.total);
-                            let str = item.parentNode.parentNode.children[2].innerText;
-                            this.total += parseInt(str.substring(str.indexOf(' '), str.lastIndexOf(' ')).trim());
+                            console.log(this.list[index]['num']);
+                            this.total += this.list[index]['num'];
                             console.log(this.total);
                         }
 
@@ -211,12 +211,9 @@
                 calcTotalPrice() {
                     let boxs = document.querySelectorAll('input[name="checks"]')
                     this.totalPrice = 0;
-                    boxs.forEach((item) => {
+                    boxs.forEach((item, index) => {
                         if (item.checked) {
-                            let str = item.parentNode.parentNode.children[4].innerText;
-                            console.log(str.substring(str.lastIndexOf(' ')))
-                            this.totalPrice += parseFloat(str.substring(str.lastIndexOf(' ')));
-                            // this.total += parseInt(str.substring(str.indexOf(' '), str.lastIndexOf(' ')).trim());
+                            this.totalPrice += this.list[index]['num'] * this.list[index]['price'];
                         }
 
                     })
