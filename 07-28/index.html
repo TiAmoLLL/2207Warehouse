@@ -2,7 +2,7 @@
  * @Author: lzy
  * @Description: 
  * @Date: 2022-07-26 19:31:35
- * @LastEditTime: 2022-07-28 21:18:03
+ * @LastEditTime: 2022-07-29 08:27:26
  * @FilePath: \code\test\2207Warehouse\07-28\index.html
 -->
 <!DOCTYPE html>
@@ -49,13 +49,33 @@
         }
 
         li>strong {
-            display: inline-block;
+            display: -webkit-box;
             width: 200px;
+            height: 50%;
+            overflow: hidden;
+            font: 12px/1.5 'Lucida Grande', Arial, '\5FAE\8F6F\96C5\9ED1', '\5b8b\4f53';
+            -webkit-box-orient: vertical;
+            /*子元素垂直排列*/
+            -webkit-line-clamp: 3;
+            /*可以显示的行数，超出部分用...表示*/
+            text-overflow: ellipsis;
+            /*（多行文本的情况下，用省略号“…”隐藏溢出范围的文本)*/
         }
 
         li>span {
             display: inline-block;
             width: 120px;
+            height: 50%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font: 12px/1.5 'Lucida Grande', Arial, '\5FAE\8F6F\96C5\9ED1', '\5b8b\4f53';
+            overflow: hidden;
+            font: 12px/1.5 'Lucida Grande', Arial, '\5FAE\8F6F\96C5\9ED1', '\5b8b\4f53';
+            -webkit-box-orient: vertical;
+            /*子元素垂直排列*/
+            -webkit-line-clamp: 3;
+            /*可以显示的行数，超出部分用...表示*/
+            text-overflow: ellipsis;
         }
 
         em {
@@ -73,6 +93,11 @@
         em:hover {
             opacity: .5;
         }
+
+        img {
+            width: 50px;
+            height: 50px;
+        }
     </style>
 </head>
 
@@ -84,6 +109,9 @@
                     <span>
                         商品名
                     </span>
+                    <span>
+                        图片
+                    </span>
                     <strong>商品介绍</strong>
                     <span>数量</span>
                     <span>价格</span>
@@ -92,23 +120,24 @@
                         操作
                     </div>
                 </li>
-                <li v-for="(item,index) in list" :keys="item.id">
+                <li v-for="(item,index) in list" :keys="item.proid">
                     <span>
                         <input type="checkbox" name="checks" @click="choice">
-                        {{item.name}}
+                        {{item.proname}}
                     </span>
-                    <strong>{{item.title}}</strong>
+                    <img :src="item.img1" alt="">
+                    <strong>{{item.desc}}</strong>
                     <span>
-                        <button @click="reduceNum(--item.num)">-1</button>
-                        {{item.num}}
-                        <button @click="addNum(++item.num)">+1</button>
+                        <button @click="reduceNum(--item.sales)">-1</button>
+                        {{item.sales}}
+                        <button @click="addNum(++item.sales)">+1</button>
                     </span>
                     <span>
-                        {{item.price,'￥ '|priceFilters}}
+                        {{item.originprice,'￥ '|priceFilters}}
                     </span>
-                    <span>{{item.num*item.price,'￥ '|priceFilters}}</span>
+                    <span>{{item.sales*item.originprice,'￥ '|priceFilters}}</span>
                     <div class="edit">
-                        <button @click="deleteCart(item.id)">删除</button>
+                        <button @click="deleteCart(item.proid)">删除</button>
                     </div>
                 </li>
                 <!-- 总计 -->
@@ -132,28 +161,22 @@
     </div>
     <!-- 引入vue.js -->
     <script src='https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         const vm = new Vue({
             el: '#app',
             data: {
-                list: [
-                    { id: 1, name: 'iPhone 13', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 1, price: 9999 },
-                    { id: 2, name: 'iPhone 12', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 8888 },
-                    { id: 3, name: 'iPhone 11', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 7598 },
-                    { id: 4, name: 'iPhone 10', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 300, price: 1000.15 },
-                    { id: 5, name: 'iPhone 9', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 2555 },
-                    { id: 6, name: '小米', title: 'Apple iPhone 13 (A2634) 128GB 星光色 支持移动联通电信5G 双卡双待手机', num: 100, price: 8666 }
-                ],
+                list: [],
                 // 总量
                 total: 0,
                 // 总价
                 totalPrice: 0,
             },
             methods: {
-                deleteCart(id) {
+                deleteCart(proid) {
                     for (let key in this.list) {
-                        // console.log(this.list[key]['id'] === id);
-                        if (this.list[key]['id'] === id) {
+                        console.log(this.list[key]['proid'] == proid);
+                        if (this.list[key]['proid'] === proid) {
                             this.list.splice(key, 1);
                         }
                     }
@@ -199,8 +222,8 @@
                     boxs.forEach((item, index) => {
                         console.log(index)
                         if (item.checked) {
-                            console.log(this.list[index]['num']);
-                            this.total += this.list[index]['num'];
+                            console.log(this.list[index]['sales']);
+                            this.total += this.list[index]['sales'];
                             console.log(this.total);
                         }
 
@@ -213,13 +236,28 @@
                     this.totalPrice = 0;
                     boxs.forEach((item, index) => {
                         if (item.checked) {
-                            this.totalPrice += this.list[index]['num'] * this.list[index]['price'];
+                            this.totalPrice += this.list[index]['sales'] * this.list[index]['originprice'];
                         }
 
                     })
+                },
+                // axios请求
+                getList() {
+                    axios.get('http://121.89.205.189/api/pro/list?limitNum=20')
+                        .then(res => {
+                            this.list = res.data.data;
+                            console.log(res.data.data);
+                            return res.data.data;
+                        })
                 }
             },
+
+            created() {
+                // 获取数据
+                this.getList();
+            },
             mounted() {
+                // 渲染数据列表之后计算总量和总价
                 this.calcTotal();
             },
             // 过滤器生成￥
