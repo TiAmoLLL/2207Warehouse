@@ -1,0 +1,213 @@
+<!--
+ * @Author: lzy
+ * @Description: 
+ * @Date: 2022-07-29 21:12:58
+ * @LastEditTime: 2022-07-30 18:02:21
+ * @FilePath: \code\test\2207Warehouse\07-29\index.html
+-->
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+    <div id='app'>
+        <div class="header">
+            <!-- <input type="checkbox" name="allBox" id="allBox" v-model="allBox"> -->
+            <img :src="img" alt="" class="check_img" @click="allBoxClick()">
+            <em>全选</em>
+            <em @click="inverse()">反选</em>
+        </div>
+        <my-list :goods="goods" :hobby="hobby" :addBox="allBox" @enlarge-box="handle($event)">
+            <!-- <template slot-scope="scope">
+                <input type="checkbox" name="hobby" :value="'hobby'+scope.info.title" v-model="hobby">
+            </template> -->
+
+        </my-list>
+        <div class="footer">
+            {{total,'总价: ￥' | priceFilters}}
+        </div>
+    </div>
+    <!-- 引入vue.js -->
+    <script src='https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js'></script>
+    <script src="js/index.js"></script>
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                goods: [{
+                    title: '佛跳墙',
+                    price: 88.88,
+                    number: 1,
+                    img: 'img/佛跳墙.jpg'
+                }, {
+                    title: '翠堂菜拼金钱袋',
+                    price: 66.66,
+                    number: 1,
+                    img: 'img/翠堂菜拼金钱袋.jpg'
+                }, {
+                    title: '果仁鸳鸯虾球',
+                    price: 55.55,
+                    number: 1,
+                    img: 'img/果仁鸳鸯虾球.jpg'
+                }, {
+                    title: '海皇三鲜煎面',
+                    price: 11.11,
+                    number: 1,
+                    img: 'img/海皇三鲜煎面.jpg'
+                }, {
+                    title: '黑醋法国鹅肝',
+                    price: 22.22,
+                    number: 1,
+                    img: 'img/黑醋法国鹅肝.jpg'
+                }, {
+                    title: '家乡葱油饼',
+                    price: 33.33,
+                    number: 1,
+                    img: 'img/家乡葱油饼.jpg'
+                }, {
+                    title: '金奖鳗鱼酥',
+                    price: 44.44,
+                    number: 1,
+                    img: 'img/金奖鳗鱼酥.jpg'
+                }, {
+                    title: '上汤龙虾',
+                    price: 77.77,
+                    number: 1,
+                    img: 'img/上汤龙虾.jpg'
+                }, {
+                    title: '深海金枪鱼',
+                    price: 99.99,
+                    number: 1,
+                    img: 'img/深海金枪鱼.jpg'
+                }, {
+                    title: '野生水鱼焖鲍鱼鸡',
+                    price: 99.00,
+                    number: 1,
+                    img: 'img/野生水鱼焖鲍鱼鸡.jpg'
+                }, {
+                    title: '佛跳墙',
+                    price: 88.88,
+                    number: 1,
+                    img: 'img/佛跳墙.jpg'
+                }, {
+                    title: '翠堂菜拼金钱袋',
+                    price: 66.66,
+                    number: 1,
+                    img: 'img/翠堂菜拼金钱袋.jpg'
+                }, {
+                    title: '果仁鸳鸯虾球',
+                    price: 55.55,
+                    number: 1,
+                    img: 'img/果仁鸳鸯虾球.jpg'
+                }, {
+                    title: '海皇三鲜煎面',
+                    price: 11.11,
+                    number: 1,
+                    img: 'img/海皇三鲜煎面.jpg'
+                }, {
+                    title: '黑醋法国鹅肝',
+                    price: 22.22,
+                    number: 1,
+                    img: 'img/黑醋法国鹅肝.jpg'
+                }, {
+                    title: '家乡葱油饼',
+                    price: 33.33,
+                    number: 1,
+                    img: 'img/家乡葱油饼.jpg'
+                }, {
+                    title: '金奖鳗鱼酥',
+                    price: 44.44,
+                    number: 1,
+                    img: 'img/金奖鳗鱼酥.jpg'
+                }, {
+                    title: '上汤龙虾',
+                    price: 77.77,
+                    number: 1,
+                    img: 'img/上汤龙虾.jpg'
+                }, {
+                    title: '深海金枪鱼',
+                    price: 99.99,
+                    number: 1,
+                    img: 'img/深海金枪鱼.jpg'
+                }, {
+                    title: '野生水鱼焖鲍鱼鸡',
+                    price: 99.00,
+                    number: 1,
+                    img: 'img/野生水鱼焖鲍鱼鸡.jpg'
+                }]
+                ,
+                allBox: false
+                ,
+                hobby: [],
+                img: 'img/choose.png',
+                total: 0
+            },
+            methods: {
+                // getHobby(val) {
+                //     console.log(val);
+                // }
+                handle(val) {
+                    // console.log(val);
+                    this.allBox = val;
+                },
+                allBoxClick() {
+                    this.hobby = [];
+                    this.allBox = !this.allBox;
+                    if (this.allBox) {
+                        this.goods.forEach((item, index) => {
+                            this.hobby.push('hobby' + index);
+                        });
+                    }
+                },
+                // 反选事件
+                inverse() {
+                    const list = [];
+                    this.goods.forEach((item, index) => {
+                        if (this.hobby.indexOf('hobby' + index) === -1) {
+                            list.push('hobby' + index);
+                        }
+                    })
+                    this.hobby = list;
+                    list = [];
+                }
+            },
+            components: {
+                "my-list": listParent
+            },
+            filters: {
+                priceFilters(val, str) {
+                    return str + val.toFixed(2);
+                }
+            },
+            watch: {
+                allBox(val) {
+                    val ?
+                        this.img = 'img/choose2.png'
+                        :
+                        this.img = 'img/choose.png';
+
+                }
+
+            },
+            computed: {
+                getTotal() {
+                    console.log(this.total);
+                    this.total = 0;
+                    this.hobby.forEach((item, index) => {
+                        this.total += parseFloat(this.goods[item.substring(5)].number * this.goods[item.substring(5)].price);
+                    })
+
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
